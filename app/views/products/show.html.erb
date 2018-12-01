@@ -1,0 +1,17 @@
+<h2><%= @product.name %></h2>
+<%= link_to @product.category.name, @product.category %> | &#8377;<%= @product.price%><br/>
+<%= @product.description%><br/>
+<%= form_for @cart_line_item do |f| %>
+  <div class= "field">
+    <%= f.label :quantity %>
+    <%= f.select :quantity, (1..10).to_a %>
+  </div>
+  <div class= "field"><%= f.hidden_field :product_id, value: @product.id %></div>
+  <div class= "action"><%= f.submit "Add to Cart" %></div>
+<% end %>
+ 
+<% if user_signed_in? && current_user.is_admin %>
+  <%= link_to "Edit", edit_product_path %> | 
+  <%= link_to "Delete", product_path, method: :delete, data: {confirm: "Are you sure?"}%>
+<% end %><br/>
+<%= link_to "List all products", products_path %>

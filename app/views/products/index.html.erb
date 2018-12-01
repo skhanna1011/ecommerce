@@ -1,0 +1,25 @@
+<h2>Listing Products</h2>
+<% if @products.empty? %>
+  No products found
+<% end %>
+<table class ="table table-hover">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Price</th>
+      <th>Category</th>
+    </tr>
+  </thead>
+  <tbody><%@products.each do |product|%>
+    <tr>
+      <td><%= link_to product.name, product%></td>
+      <td>&#8377;<%= product.price%></td>
+      <td><%= link_to product.category.name, product.category%></td>
+    </tr>
+  <%end%></tbody>
+</table>
+<% if user_signed_in? %>
+  <% if current_user.is_admin %>
+    <%= link_to "New Product", new_product_path %>
+  <% end %>
+<%end%>

@@ -1,0 +1,63 @@
+<h2>Add Product</h2>
+<%= form_for @product do |f| %>
+<% if @product.errors.any? %>
+  <h3>These errors prohibitted the form from being saved :</h3>
+  <ul><% @product.errors.full_messages.each do |msg| %>
+    <li><%= msg %></li>
+    <% end %>
+  </ul>
+<% end %>
+<% errors = @product.errors.messages %>
+<div class="field">
+  <label>Name:</label>
+  <%= f.text_field :name, placeholder: "Enter Product Name", autofocus: true%><%= errors[:name].join(",")%>
+</div>
+
+<div class="field">
+  <label>Price:</label><span id="nameError"> </span>
+  <%= f.number_field :price , min: 1, placeholder: "Enter Product Price"%><%= errors[:price].join(",")%>
+</div>
+
+<div class="field">
+  <label>Description:</label>
+  <%= f.text_area :description, placeholder: "Enter Product Description"%><%= errors[:description].join(",")%>
+</div>
+
+<div class="field">
+  <label>Category:</label>
+  <%= f.collection_select :category_id, Category.all, :id, :name, prompt:"Select Category" %><%= errors[:category_id].join(",")%>
+</div>
+
+<div class="field">
+  <label>Sub Category : </label><br/>
+    <%= f.collection_select :sub_category_id, [], :id, :name, prompt: "Select Sub      Category" %>
+</div>
+
+<div class="action">
+  <%= f.submit%> or <%= link_to"Back", products_path%>
+</div>
+<script type="text/javascript">
+  var categoryHandle = document.getElementById('product_category_id');
+  var subCategoryHandle = document.getElementById('product_sub_category_id');
+  categoryHandle.addEventListener('change', function() {
+    subCategoryHandle.innerHTML = "";
+    if(categoryHandle.value !== ""){
+      var xhr = new XMLHttpRequest();
+      xhr.open('GET', '/ajax_calls/find_sub_categories?category_id=' + categoryHandle.value, true);
+      xhr.onreadystatechange = function() {
+        if(xhr.readyState === 4 && xhr.status === 200){
+          var subCategories = JSON.parse(xhr.responseText);
+          subCategories.forEach(function(subCategory){
+            var newElement = document.createElement('option');
+            var newText = document.createTextNode(subCategory.name);
+            newElement.appendChild(newText);
+            newElement.setAttribute("value", subCategory.id);
+            subCategoryHandle.appendChild(newElement);
+          });
+        }
+      }
+      xhr.send();
+    }
+  },false);
+</script>
+<% end %>
